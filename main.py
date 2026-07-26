@@ -8,6 +8,7 @@ import cv2
 from config_loader import load_config
 from bilateral import BilateralDenoiser
 from non_local_means import NonLocalMeansDenoiser
+from dark_frame import DarkFrameSubtractor
 
 
 def app_dir() -> Path:
@@ -53,6 +54,12 @@ def main():
         return path if path.is_absolute() else (config_dir / path)
 
     denoiser = get_denoiser(cfg)
+
+    dark_subtractor = None
+    if cfg.dark_frame.enabled:
+        dark_subtractor = DarkFrameSubtractor(cfg.dark_frame.path)
+        print(f"Dark frame subtraction: ENABLED ({cfg.dark_frame.path})")
+
     output_dir = resolve(cfg.output.directory) / cfg.method
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -71,6 +78,9 @@ def main():
             image = cv2.imread(str(img_path))
             if image is None:
                 raise ValueError("cv2.imread returned None (unreadable/corrupt file)")
+
+            if dark_subtractor is not None:
+                image = dark_subtractor.subtract(image)
 
             result = denoiser.denoise(image)
 

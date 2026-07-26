@@ -25,6 +25,10 @@ DEFAULTS = {
         "template_window_size": 7,
         "search_window_size": 21,
     },
+    "dark_frame": {
+        "enabled": False,
+        "path": "./dark_frame.png",
+    },
 }
 
 
@@ -76,6 +80,17 @@ def load_config(path: str = "config.yaml") -> SimpleNamespace:
         input_dir = config_path.resolve().parent / input_dir
     if not input_dir.exists():
         raise ValueError(f"Input directory does not exist: '{input_dir}'")
+
+    dark_frame = merged["dark_frame"]
+    if dark_frame["enabled"]:
+        dark_path = Path(dark_frame["path"])
+        if not dark_path.is_absolute():
+            dark_path = config_path.resolve().parent / dark_path
+        if not dark_path.exists():
+            raise ValueError(f"dark_frame.enabled is true but file does not exist: '{dark_path}'")
+        # Store the resolved absolute path so main.py doesn't need to
+        # re-derive it relative to the config file location.
+        dark_frame["path"] = str(dark_path)
 
     return _to_namespace(merged)
 
