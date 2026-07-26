@@ -1,0 +1,19 @@
+input:
+  directory: "./images/input"
+  extensions: [".png", ".jpg", ".jpeg", ".tiff", ".tif"]
+
+output:
+  directory: "./images/output"
+  suffix: "_denoised"
+
+method: "non_local_means"      # has to be either "non_local_means" "bilateral"
+
+bilateral:
+  diameter: 9                  # Neighborhood diameter. -1 = auto from sigma_space.
+  sigma_color: 75               # Larger = blends more differing colors (more smoothing).
+  sigma_space: 75               # Larger = pixels farther away have more influence on denoising.
+
+non_local_means:
+  h: 10                         # Filter strength; higher = more denoising, less detail.
+  template_window_size: 7       # Patch size used for similarity comparison (odd).
+  search_window_size: 21        # How far to search for similar patches (odd, >= template).

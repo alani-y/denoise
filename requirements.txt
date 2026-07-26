@@ -1,0 +1,4 @@
+opencv-python-headless>=4.9,<5
+pyyaml>=6.0,<7
+numpy>=1.26,<2
+pyinstaller>=6.0,<7
